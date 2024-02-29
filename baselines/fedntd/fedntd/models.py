@@ -87,7 +87,8 @@ def train(  # pylint: disable=too-many-arguments
         Parameter for beta.
     """
     criterion = NTDLoss(num_classes=num_classes, tau=tau, beta=beta)
-    global_net = Net(num_classes)
+    # criterion = nn.CrossEntropyLoss()
+    global_net = Net(num_classes).to(device)
     global_net.load_state_dict(net.state_dict())
     net.train()
     for _ in range(epochs):
@@ -98,6 +99,7 @@ def train(  # pylint: disable=too-many-arguments
             with torch.no_grad():
                 global_logits = global_net(images)
             loss = criterion(local_logits, labels, global_logits)
+            # loss = criterion(net(images), labels)
             loss.backward()
             optimizer.step()
 
